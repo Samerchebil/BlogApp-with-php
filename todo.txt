@@ -1,4 +1,5 @@
-deletepost
-update post
+deletepost : done
+update post done
+update profile
 report
 tnadhef il code

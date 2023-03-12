@@ -76,7 +76,7 @@ class DatabaseClass {
         $stmt->execute([$title, $description, $user_id,$photoPath]);
         return $this->pdo->lastInsertId();
     }
-
+ 
     // CREATE TABLE `posts` (
     //     `id` INT NOT NULL AUTO_INCREMENT,
     //     `title` VARCHAR(255) NOT NULL,
@@ -94,10 +94,11 @@ class DatabaseClass {
     
     
 
-    public function updatePost($id, $title, $description, $user_id) {
-        $stmt = $this->pdo->prepare("UPDATE `posts` SET `title` = ?, `description` = ?, `user_id` = ? WHERE `id` = ?");
-        $stmt->execute([$title, $description, $user_id, $id]);
+    public function updatePost($id, $title, $description, $user_id,$uploadPath) {
+        $stmt = $this->pdo->prepare("UPDATE `posts` SET `title` = ?, `description` = ?, `user_id` = ?, `photo` = ? WHERE `id` = ?");
+        $stmt->execute([$title, $description, $user_id,$uploadPath, $id]);
     }
+    
     public function getAllPosts() {
         $stmt = $this->pdo->prepare("SELECT * FROM `posts`");
         $stmt->execute();

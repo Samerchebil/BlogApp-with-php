@@ -70,10 +70,11 @@ foreach ($posts as $post) {
     $post_photo = $post['photo'];
   
     $photo = preg_replace('/C:\\\\xampp\\\\htdocs\\\\BlogPhp/', '.', $post_photo);
-    $username_post = $db->getUserById( $post['user_id'])['username'];
+    $username_post = $db->getUserById($post['user_id'])['username'];
     $post_id = $post['id'];
     $like_count = $db->getLikesCountByPostId($post_id);
-?>
+    $user_id = $_SESSION['user_id'];
+    ?>
     <div class="w3-card-4 w3-margin w3-white">
         <?php if (!empty($photo)) { ?>
         <img src="<?php echo $photo; ?>" alt="Post photo" style="width:100%">
@@ -97,6 +98,12 @@ foreach ($posts as $post) {
                     ?>
                         <a href="like_post.php?post_id=<?php echo $post_id; ?>" class="w3-button w3-padding-large w3-white w3-border"><b>Like</b></a>
                     <?php
+                    }
+                    if ($user_id == $post['user_id']) {
+                      ?>
+                      <a href="deletePost.php?post_id=<?php echo $post_id; ?>" class="w3-button w3-padding-large w3-white w3-border"><b>Delete</b></a>
+                      <a href="updatePost.php?post_id=<?php echo $post_id; ?>" class="w3-button w3-padding-large w3-white w3-border"><b>Update</b></a>
+                     <?php
                     }
                     ?>
                 </div>
@@ -168,21 +175,7 @@ echo $output;
 </div> <!-- close w3-col l4 div -->
   <hr> 
  
-  <!-- Labels / tags -->
-  <div class="w3-card w3-margin">
-    <div class="w3-container w3-padding">
-      <h4>Tags</h4>
-    </div>
-    <div class="w3-container w3-white">
-    <p><span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">London</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">IKEA</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">NORWAY</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">DIY</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Baby</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Family</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">News</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Clothing</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Shopping</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Sports</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Games</span>
-    </p>
-    </div>
-  </div>
-  
+
 <!-- END Introduction Menu -->
 </div>
 
