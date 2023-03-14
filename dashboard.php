@@ -88,6 +88,11 @@ foreach ($posts as $post) {
             <p><?php echo $description; ?></p>
             <div class="w3-row">
                 <div class="w3-col m8 s12">
+                <?php
+                $is_post_reported = $db->checkIfPostReported($user_id, $post_id);
+                $report_button_text = $is_post_reported ? 'Reported' : 'Report';
+                $report_button_color = $is_post_reported ? 'w3-red' : 'w3-white';
+                ?>
                     <?php
                     $user_liked_post = $db->checkIfUserLikedPost($user_id, $post_id);
                     if ($user_liked_post) {
@@ -106,7 +111,14 @@ foreach ($posts as $post) {
                      <?php
                     }
                     ?>
-                </div>
+                     <?php
+                    if ($user_id != $post['user_id']) {
+                      ?>
+                    <a href="report_post.php?post_id=<?php echo $post_id; ?>" class="w3-button w3-padding-large <?php echo $report_button_color; ?> w3-border"><b><?php echo $report_button_text; ?></b></a>
+                    <?php
+                    }
+                    ?>
+                  </div>
                 <div class="w3-col m4 w3-hide-small">
                     <p><span class="w3-padding-large w3-right"><b>Likes</b> <span class="w3-tag"><?php echo $like_count; ?></span></span></p>
                 </div>
@@ -128,7 +140,7 @@ foreach ($posts as $post) {
   <img src="<?=$user_photo?>"style="width:100%">
   
     <div class="w3-container w3-white">
-      <h4><b><?= $user_username ?></b></h4>
+      <h4><a href="updateProfile.php" style="text-decoration: none;"><b><?= $user_username ?></b></a></h4>
       <p> <?= $user_email ?></p>
       <p class="box-register">Upload a new <a href="UploadPost.php">post</a> </p>
     </div>

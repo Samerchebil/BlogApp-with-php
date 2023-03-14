@@ -44,10 +44,37 @@ class DatabaseClass {
     }
    
 
-    public function updateUser($id, $email, $username, $password) {
-        $stmt = $this->pdo->prepare("UPDATE `users` SET `email` = ?, `username` = ?, `password` = ? WHERE `id` = ?");
-        $stmt->execute([$email, $username, $password, $id]);
+    // public function updateUser($id, $email, $username, $password) {
+    //     $stmt = $this->pdo->prepare("UPDATE `users` SET `email` = ?, `username` = ?, `password` = ? WHERE `id` = ?");
+    //     $stmt->execute([$email, $username, $password, $id]);
+    // }
+
+    function updateUser($id,$username,$email,$password, $photo = null) {
+        // Create a PDO object and prepare the SQL statement
+        $sql = "UPDATE users SET email = :email, username = :username, password = :password";
+        $params = [
+            ':email' => $email,
+            ':username' => $username,
+            ':password' => password_hash($password, PASSWORD_DEFAULT),
+            ':id' => $id
+        ];
+    
+        // If a new photo was uploaded, update the photo path in the database
+        if ($photo !== null) {
+            $sql .= ", photo = :photo";
+            $params[':photo'] = $photo;
+        }
+    
+        $sql .= " WHERE id = :id";
+    
+        // Execute the SQL statement and return the number of affected rows
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
     }
+
+
+
     public function getAllUsersById($id) {
         $stmt = $this->pdo->prepare("SELECT * FROM `users` WHERE `id` = ?");
         $stmt->execute([$id]);
@@ -233,6 +260,8 @@ public function loginUser($emailOrUsername, $password) {
     return $user;
 }
 
+//// post 
+
 
 public function getLikesCountByPostId($post_id)
 {
@@ -273,5 +302,49 @@ public function unlikePost($user_id, $post_id) {
     }
 }
 
+// report 
+
+public function check_reports($post_id) {
+    $stmt = $this->pdo->prepare("SELECT COUNT(*) AS num_reports FROM reports WHERE post_id = ?");
+    $stmt->execute([$post_id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row['num_reports'] >= 3;
+}
+
+
+public function checkIfPostReported($user_id, $post_id) {
+    $stmt = $this->pdo->prepare("SELECT * FROM reports WHERE user_id = ? AND post_id = ?");
+    $stmt->execute([$user_id, $post_id]);
+    return $stmt->rowCount() > 0;
+}
+
+
+public function deletePostIfReported($post_id) {
+    $stmt = $this->pdo->prepare("SELECT COUNT(*) AS count FROM reports WHERE post_id = ?");
+    $stmt->execute([$post_id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $count = $row['count'];
+    if ($count >= 3) {
+        // Delete post
+        $stmt = $this->pdo->prepare("DELETE FROM posts WHERE id = ?");
+        $stmt->execute([$post_id]);
+        return true;
+    }
+
+    return false;
+}
+public function reportPost($user_id, $post_id, $reason) {
+    $stmt = $this->pdo->prepare("SELECT * FROM reports WHERE user_id = ? AND post_id = ?");
+    $stmt->execute([$user_id, $post_id]);
+
+    if ($stmt->rowCount() > 0) {
+        $stmt = $this->pdo->prepare("UPDATE reports SET reason = ? WHERE user_id = ? AND post_id = ?");
+        $stmt->execute([$reason, $user_id, $post_id]);
+    } else {
+        // Insert a new report into the post_reports table
+        $stmt = $this->pdo->prepare("INSERT INTO reports (user_id, post_id, reason) VALUES (?, ?, ?)");
+        $stmt->execute([$user_id, $post_id, $reason]);
+    }
+}
 }
 ?>

@@ -97,7 +97,7 @@ if (!$post) {
 									<div id="form-message-success" class="mb-4">
 										Your message was sent, thank you!
 									</div>
-                                    <form method="post" action="updatePost.php" name="updatePostForm" class="contactForm" enctype="multipart/form-data">
+    <form method="post" action="updatePost.php" name="updatePostForm" class="contactForm" enctype="multipart/form-data">
     <input type="hidden" name="post_id" value="<?php echo $post_id; ?>">
     <div class="row">
         <div class="col-md-6">
