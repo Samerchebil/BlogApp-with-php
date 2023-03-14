@@ -10,15 +10,10 @@ class DatabaseClass {
     {
         try {
             $this->pdo= new PDO("mysql:host={$dbhost};dbname={$dbname};", $username, $password);
-            //$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            // $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
+            } catch (PDOException $e) {
             throw new Exception($e->getMessage());
         }
     }
-
-   
-
     public function connect() {
         $dsn = "mysql:host={$this->host};dbname={$this->database};charset=utf8mb4";
         $options = [
@@ -29,8 +24,7 @@ class DatabaseClass {
         $this->pdo = new PDO($dsn, $this->username, $this->password, $options);
     }
 
-    // CRUD operations for the "users" table
-
+    //users
     public function createUser($email, $username, $password) {
         $stmt = $this->pdo->prepare("INSERT INTO `users` (`email`, `username`, `password`) VALUES (?, ?, ?)");
         $stmt->execute([$email, $username, $password]);
@@ -42,15 +36,8 @@ class DatabaseClass {
         $stmt->execute();
         return $stmt->fetchAll();
     }
-   
-
-    // public function updateUser($id, $email, $username, $password) {
-    //     $stmt = $this->pdo->prepare("UPDATE `users` SET `email` = ?, `username` = ?, `password` = ? WHERE `id` = ?");
-    //     $stmt->execute([$email, $username, $password, $id]);
-    // }
 
     function updateUser($id,$username,$email,$password, $photo = null) {
-        // Create a PDO object and prepare the SQL statement
         $sql = "UPDATE users SET email = :email, username = :username, password = :password";
         $params = [
             ':email' => $email,
@@ -58,16 +45,11 @@ class DatabaseClass {
             ':password' => password_hash($password, PASSWORD_DEFAULT),
             ':id' => $id
         ];
-    
-        // If a new photo was uploaded, update the photo path in the database
-        if ($photo !== null) {
+            if ($photo !== null) {
             $sql .= ", photo = :photo";
             $params[':photo'] = $photo;
         }
-    
         $sql .= " WHERE id = :id";
-    
-        // Execute the SQL statement and return the number of affected rows
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->rowCount();
@@ -96,116 +78,8 @@ class DatabaseClass {
         $stmt->execute([$id]);
     }
 
-    // CRUD operations for the "posts" table
 
-    public function createPost($title, $description, $user_id,$photoPath = null) {
-        $stmt = $this->pdo->prepare("INSERT INTO `posts` (`title`, `description`, `user_id`,`photo`) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$title, $description, $user_id,$photoPath]);
-        return $this->pdo->lastInsertId();
-    }
- 
-    // CREATE TABLE `posts` (
-    //     `id` INT NOT NULL AUTO_INCREMENT,
-    //     `title` VARCHAR(255) NOT NULL,
-    //     `description` TEXT NOT NULL,
-    //     `user_id` INT NOT NULL,
-    //     `photo` VARCHAR(255),
-    //     PRIMARY KEY (`id`)
-    //   );
-
-    public function readPost($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM `posts` WHERE `id` = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetchAll();
-    }
     
-    
-
-    public function updatePost($id, $title, $description, $user_id,$uploadPath) {
-        $stmt = $this->pdo->prepare("UPDATE `posts` SET `title` = ?, `description` = ?, `user_id` = ?, `photo` = ? WHERE `id` = ?");
-        $stmt->execute([$title, $description, $user_id,$uploadPath, $id]);
-    }
-    
-    public function getAllPosts() {
-        $stmt = $this->pdo->prepare("SELECT * FROM `posts`");
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-    
-    public function getPostById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM `posts` WHERE `id` = ?");
-        $stmt->execute([$id]);
-        $result = $stmt->fetch();
-        if (!$result) {
-            return null; // return null when no post is found
-        }
-    
-        return $result;
-    }
-    
-    public function deletePostById($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM `posts` WHERE `id` = ?");
-        $stmt->execute([$id]);
-        
-    }
-
-    // CRUD operations for the "likes" table
-    public function createVote($post_id, $user_id, $vote_type) {
-        $stmt = $this->pdo->prepare("INSERT INTO votes (post_id, user_id, vote_type) VALUES (?, ?, ?)");
-        $stmt->execute([$post_id, $user_id, $vote_type]);
-        return $this->pdo->lastInsertId();
-    }
-
-    public function readVote($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM votes WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch();
-    }
-
-    public function updateVote($id, $post_id, $user_id, $vote_type) {
-        $stmt = $this->pdo->prepare("UPDATE votes SET post_id = ?, user_id = ?, vote_type = ? WHERE id = ?");
-        $stmt->execute([$post_id, $user_id, $vote_type, $id]);
-        return $stmt->rowCount();
-    }
-
-    public function deleteVote($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM votes WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->rowCount();
-    }
-
-    public function getVotesForPost($post_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM votes WHERE post_id = ?");
-        $stmt->execute([$post_id]);
-        return $stmt->fetchAll();
-    }
-
-
-
-// CRUD operations for the "reports" table
-
-public function createReport($post_id, $user_id) {
-    $stmt = $this->pdo->prepare("INSERT INTO `reports` (`post_id`, `user_id`) VALUES (?, ?)");
-    $stmt->execute([$post_id, $user_id]);
-    return $this->pdo->lastInsertId();
-}
-
-public function readReport($id) {
-    $stmt = $this->pdo->prepare("SELECT * FROM `reports` WHERE `id` = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetch();
-}
-
-public function updateReport($id, $post_id, $user_id, $reason) {
-    $stmt = $this->pdo->prepare("UPDATE `reports` SET `post_id` = ?, `user_id` = ?, `reason` = ? WHERE `id` = ?");
-    $stmt->execute([$post_id, $user_id, $reason, $id]);
-}
-
-public function deleteReport($id) {
-    $stmt = $this->pdo->prepare("DELETE FROM `reports` WHERE `id` = ?");
-    $stmt->execute([$id]);
-}
-
 public function registerUser1($id, $email, $username, $password) {
     $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ? OR username = ?");
     $stmt->execute([$email, $username]);
@@ -260,8 +134,58 @@ public function loginUser($emailOrUsername, $password) {
     return $user;
 }
 
-//// post 
 
+    // "posts"
+
+    public function createPost($title, $description, $user_id,$photoPath = null) {
+        $stmt = $this->pdo->prepare("INSERT INTO `posts` (`title`, `description`, `user_id`,`photo`) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$title, $description, $user_id,$photoPath]);
+        return $this->pdo->lastInsertId();
+    }
+
+    // CREATE TABLE `posts` (
+    //     `id` INT NOT NULL AUTO_INCREMENT,
+    //     `title` VARCHAR(255) NOT NULL,
+    //     `description` TEXT NOT NULL,
+    //     `user_id` INT NOT NULL,
+    //     `photo` VARCHAR(255),
+    //     PRIMARY KEY (`id`)
+    //   );
+
+    public function readPost($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM `posts` WHERE `id` = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetchAll();
+    }
+
+    public function updatePost($id, $title, $description, $user_id,$uploadPath) {
+        $stmt = $this->pdo->prepare("UPDATE `posts` SET `title` = ?, `description` = ?, `user_id` = ?, `photo` = ? WHERE `id` = ?");
+        $stmt->execute([$title, $description, $user_id,$uploadPath, $id]);
+    }
+    
+    public function getAllPosts() {
+        $stmt = $this->pdo->prepare("SELECT * FROM `posts`");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    public function getPostById($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM `posts` WHERE `id` = ?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+        if (!$result) {
+            return null;
+        }
+        return $result;
+    }
+    
+    public function deletePostById($id) {
+        $stmt = $this->pdo->prepare("DELETE FROM `posts` WHERE `id` = ?");
+        $stmt->execute([$id]);
+        
+    }
+
+    // Likes
 
 public function getLikesCountByPostId($post_id)
 {
@@ -279,30 +203,25 @@ public function checkIfUserLikedPost($user_id, $post_id)
     return $result > 0;
 }
 public function likePost($user_id, $post_id) {
-    // Check if the user has already liked the post
     $stmt = $this->pdo->prepare("SELECT * FROM post_likes WHERE user_id = ? AND post_id = ?");
     $stmt->execute([$user_id, $post_id]);
 
     if ($stmt->rowCount() === 0) {
-        // User hasn't liked the post, insert a new row in post_likes table
         $stmt = $this->pdo->prepare("INSERT INTO post_likes (user_id, post_id) VALUES (?, ?)");
         $stmt->execute([$user_id, $post_id]);
     }
 }
 
 public function unlikePost($user_id, $post_id) {
-    // Check if the user has already liked the post
     $stmt = $this->pdo->prepare("SELECT * FROM post_likes WHERE user_id = ? AND post_id = ?");
     $stmt->execute([$user_id, $post_id]);
-
     if ($stmt->rowCount() > 0) {
-        // User has liked the post, delete the row from post_likes table
         $stmt = $this->pdo->prepare("DELETE FROM post_likes WHERE user_id = ? AND post_id = ?");
         $stmt->execute([$user_id, $post_id]);
     }
 }
 
-// report 
+    // reports
 
 public function check_reports($post_id) {
     $stmt = $this->pdo->prepare("SELECT COUNT(*) AS num_reports FROM reports WHERE post_id = ?");
@@ -325,14 +244,13 @@ public function deletePostIfReported($post_id) {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $count = $row['count'];
     if ($count >= 3) {
-        // Delete post
         $stmt = $this->pdo->prepare("DELETE FROM posts WHERE id = ?");
         $stmt->execute([$post_id]);
         return true;
     }
-
     return false;
 }
+
 public function reportPost($user_id, $post_id, $reason) {
     $stmt = $this->pdo->prepare("SELECT * FROM reports WHERE user_id = ? AND post_id = ?");
     $stmt->execute([$user_id, $post_id]);
@@ -341,10 +259,33 @@ public function reportPost($user_id, $post_id, $reason) {
         $stmt = $this->pdo->prepare("UPDATE reports SET reason = ? WHERE user_id = ? AND post_id = ?");
         $stmt->execute([$reason, $user_id, $post_id]);
     } else {
-        // Insert a new report into the post_reports table
         $stmt = $this->pdo->prepare("INSERT INTO reports (user_id, post_id, reason) VALUES (?, ?, ?)");
         $stmt->execute([$user_id, $post_id, $reason]);
     }
 }
+
+
+public function createReport($post_id, $user_id) {
+    $stmt = $this->pdo->prepare("INSERT INTO `reports` (`post_id`, `user_id`) VALUES (?, ?)");
+    $stmt->execute([$post_id, $user_id]);
+    return $this->pdo->lastInsertId();
+}
+
+public function readReport($id) {
+    $stmt = $this->pdo->prepare("SELECT * FROM `reports` WHERE `id` = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+public function updateReport($id, $post_id, $user_id, $reason) {
+    $stmt = $this->pdo->prepare("UPDATE `reports` SET `post_id` = ?, `user_id` = ?, `reason` = ? WHERE `id` = ?");
+    $stmt->execute([$post_id, $user_id, $reason, $id]);
+}
+
+public function deleteReport($id) {
+    $stmt = $this->pdo->prepare("DELETE FROM `reports` WHERE `id` = ?");
+    $stmt->execute([$id]);
+}
+
 }
 ?>

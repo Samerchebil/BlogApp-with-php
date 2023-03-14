@@ -1,20 +1,12 @@
 <?php
 require_once 'database.php';
 
-// Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the form data
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-    
-    // Generate a unique ID
     $id = hash('sha256', time() . mt_rand());
-
-    // Create a new instance of the database class
     $db = new DatabaseClass();
-
-
     try {
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $tempName = $_FILES['photo']['tmp_name'];
@@ -31,23 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user_id = $db->registerUser($id, $email, $username, $password);
         }
         
-        // Redirect to the login page
         header('Location: login.php');
         exit;
     } catch (Exception $e) {
-        // Display an error message
         $error = $e->getMessage();
     }
-
-    // Now we check if the data was submitted, isset() function will check if the data exists.
     if (!isset($_POST['username'], $_POST['password'], $_POST['email'])) {
-        // Could not get the data that should have been sent.
         exit('Please complete the registration form!');
     }
-
-    // Make sure the submitted registration values are not empty.
     if (empty($_POST['username']) || empty($_POST['password']) || empty($_POST['email'])) {
-        // One or more values are empty.
         exit('Please complete the registration form');
     }
 
@@ -64,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="css/style2.css" rel="stylesheet" type="text/css">
     <title>Register</title>
 </head>
 
@@ -140,11 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   
 <br><br><br><br> <br>
   <footer class="text-center text-white bg-white mt-5">
-    <!-- Grid container -->
     <div class="container pt-4">
-      <!-- Section: Social media -->
       <section class="mb-4">
-        <!-- Facebook -->
         <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
@@ -152,8 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           data-mdb-ripple-color="dark"
           ><i class="fab fa-facebook-f"></i
         ></a>
-
-        <!-- Twitter -->
         <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
@@ -161,36 +140,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           data-mdb-ripple-color="dark"
           ><i class="fab fa-twitter"></i
         ></a>
-  
-        <!-- Google -->
-        <a
+          <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
           role="button"
           data-mdb-ripple-color="dark"
           ><i class="fab fa-google"></i
         ></a>
-  
-        <!-- Instagram -->
-        <a
+          <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
           role="button"
           data-mdb-ripple-color="dark"
           ><i class="fab fa-instagram"></i
         ></a>
-      <!-- Section: Social media -->
     </div>
     <section class="text-dark card-title text-center mb-5 fs-5">
     Explore the World of Blogging with Us
       </section>
-    <!-- Grid container -->
-    <!-- Copyright -->
     <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
       © 2020 Copyright:
       <a class="text-dark" href="https://mdbootstrap.com/">SamerBlog.com</a>
     </div>
-    <!-- Copyright -->
   </footer>
 </html>
 </html>

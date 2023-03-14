@@ -11,21 +11,15 @@ $user_photo = preg_replace('/C:\\\\xampp\\\\htdocs\\\\BlogPhp/', '.', $baseuser_
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = new DatabaseClass();
-
-    // Get the form data
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $photo = $_FILES['photo'];
-
-    // Check if new password was submitted and not empty
     if (!empty($password)) {
         $password = $password;
     } else {
         $password = $_SESSION['password'];
     }
-
-    // Check if new photo was submitted
     if (isset($photo) && $photo['error'] === UPLOAD_ERR_OK) {
         $tempName = $photo['tmp_name'];
         $originalName = $photo['name'];
@@ -39,21 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $photo = $_SESSION['photo'];
     }
-
-    // Update user information in the database
     $db->updateUser($_SESSION['user_id'], $username, $email, $password, $photo);
-
-    // Update session variables with new user information
     $_SESSION['user_username'] = $username;
     $_SESSION['user_email'] = $email;
     $_SESSION['user_password'] = $password;
     $_SESSION['user_photo'] = $photo;
-
-    // Redirect to the profile page
     header('Location: dashboard.php');
     exit;
 } else {
-    // Display an error message
     $error = 'Invalid request method';
 }
 

@@ -1,32 +1,17 @@
 <?php
-// inclure le fichier de la classe DatabaseClass
 require_once 'database.php';
 
-// créer une nouvelle instance de la classe DatabaseClass
 $db = new DatabaseClass();
-
-// Vérifier si l'utilisateur a soumis un formulaire de mise à jour
 if (isset($_POST['update'])) {
-    // récupérer les valeurs du formulaire
     $id = $_POST['id'];
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-
-    // appeler la méthode "updateUser" de la classe DatabaseClass pour mettre à jour l'utilisateur dans la base de données
     $db->updateUser($id, $email, $username, $password);
-
-    // rediriger l'utilisateur vers la page d'accueil après la mise à jour
     header('Location: readUser.php');
 }
-
-// récupérer l'ID de l'utilisateur à partir de la requête GET
 $id = $_GET['updateid'];
-
-// appeler la méthode "getAllUsers" de la classe DatabaseClass pour récupérer les informations de l'utilisateur
 $user = $db->getAllUsers($id);
-
-// afficher le formulaire de mise à jour avec les informations de l'utilisateur récupérées
 ?>
 <!DOCTYPE html>
 <html lang="en">

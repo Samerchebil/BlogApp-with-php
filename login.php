@@ -1,36 +1,21 @@
 <?php
 session_start(); // start session to store user data
 
-require_once 'database.php'; // include the database class file
-
-
-
-// check if the user submitted the login form
+require_once 'database.php'; 
 if (isset($_POST['login'])) {
-    // create a new database object
     $db = new DatabaseClass();
-
-    // retrieve the email or username and password from the form
     $emailOrUsername = $_POST['email_or_username'];
     $password = $_POST['password'];
 
     try {
-        // try to log in the user
-        $user = $db->loginUser($emailOrUsername, $password);
-
-        // store the user data in the session
-        
+        $user = $db->loginUser($emailOrUsername, $password);        
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_username'] = $user['username'];
         $_SESSION['photo'] = $user['phto'];
         echo($user['username']);
-            // redirect the user to the dashboard page
         header('Location: dashboard.php');
-    
-        //   exit();
     } catch (Exception $e) {
-        // if an error occurred, display it to the user
         $error = $e->getMessage();
     }
 }
@@ -97,11 +82,8 @@ if (isset($_POST['login'])) {
   
 <br><br><br><br> <br>
   <footer class="text-center text-white bg-white mt-5">
-    <!-- Grid container -->
     <div class="container pt-4">
-      <!-- Section: Social media -->
       <section class="mb-4">
-        <!-- Facebook -->
         <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
@@ -109,8 +91,6 @@ if (isset($_POST['login'])) {
           data-mdb-ripple-color="dark"
           ><i class="fab fa-facebook-f"></i
         ></a>
-
-        <!-- Twitter -->
         <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
@@ -118,17 +98,13 @@ if (isset($_POST['login'])) {
           data-mdb-ripple-color="dark"
           ><i class="fab fa-twitter"></i
         ></a>
-  
-        <!-- Google -->
-        <a
+          <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
           role="button"
           data-mdb-ripple-color="dark"
           ><i class="fab fa-google"></i
         ></a>
-  
-        <!-- Instagram -->
         <a
           class="btn btn-link btn-floating btn-lg text-dark m-1"
           href="#!"
@@ -136,55 +112,14 @@ if (isset($_POST['login'])) {
           data-mdb-ripple-color="dark"
           ><i class="fab fa-instagram"></i
         ></a>
-      <!-- Section: Social media -->
     </div>
     <section class="text-dark card-title text-center mb-5 fs-5">
     Explore the World of Blogging with Us
       </section>
-    <!-- Grid container -->
-    <!-- Copyright -->
     <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-      © 2020 Copyright:
+      © 2023 Copyright:
       <a class="text-dark" href="https://mdbootstrap.com/">SamerBlog.com</a>
     </div>
-    <!-- Copyright -->
   </footer>
 </html>
 
-
-<!-- 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Login</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-</head>
-<body>
-    <div class="login">
-        <h1>Login</h1>
-        <?php if (isset($error)) { ?>
-            <p style="color: red;"><?php echo $error; ?></p>
-        <?php } ?>
-        <form action="login.php" method="post">
-            <label for="email_or_username">
-                <i class="fas fa-user"></i>
-            </label>
-            <input type="text" name="email_or_username" placeholder="email_or_username" id="email_or_username" required>
-            <label for="password">
-                <i class="fas fa-lock"></i>
-				</label>
-				<input type="password" name="password" placeholder="Password" id="password" required>
-				<input type="submit" name="login" value="Login">
-			</form>
-            
-            <p class="box-register">Vous êtes nouveau ici? 
-                <a href="register.php">S'inscrire</a>
-            </p>
-            
-		</div>
-	</body>
-</html>
-    
-    -->

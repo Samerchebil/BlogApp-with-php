@@ -1,14 +1,13 @@
 <?php
-session_start(); // start session to retrieve user data
+session_start(); 
 
-// check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
+
 require_once 'database.php';
 
-// retrieve user data from session
 $user_id = $_SESSION['user_id'];
 $user_email = $_SESSION['user_email'];
 $user_username = $_SESSION['user_username'];
@@ -26,7 +25,6 @@ if (isset($_POST['like'])) {
   $sql = "INSERT INTO post_likes (user_id, post_id) VALUES ($user_id, $post_id)";
   mysqli_query($conn, $sql);
 
-  // Refresh the page to display the "Liked" button
   header('Location: dashboard.php?post_id=' . $post_id);
   exit();
 }
@@ -45,30 +43,21 @@ body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </head>
 <body class="w3-light-grey">
 
-<!-- w3-content defines a container for fixed size centered content, 
-and is wrapped around the whole page content, except for the footer in this example -->
 <div class="w3-content" style="max-width:1400px">
 
-<!-- Header -->
 <header class="w3-container w3-center w3-padding-32"> 
   <h1><b>MY BLOG</b></h1>
   <p>Welcome to the blog of <span class="w3-tag"><?= $user_username ?></span></p>
 </header>
 
-<!-- Grid -->
 <div class="w3-row">
-
-<!-- Blog entries -->
-<div class="w3-col l8 s12">
-  <!-- Blog entry -->
- 
+<div class="w3-col l8 s12"> 
   <?php
 
 foreach ($posts as $post) {
     $title = $post['title'];
     $description = $post['description'];
     $post_photo = $post['photo'];
-  
     $photo = preg_replace('/C:\\\\xampp\\\\htdocs\\\\BlogPhp/', '.', $post_photo);
     $username_post = $db->getUserById($post['user_id'])['username'];
     $post_id = $post['id'];
@@ -83,7 +72,6 @@ foreach ($posts as $post) {
             <h3><b><?php echo $title; ?></b></h3>
             <h5>Written By <?php echo $username_post; ?></h5>
         </div>
-
         <div class="w3-container">
             <p><?php echo $description; ?></p>
             <div class="w3-row">
